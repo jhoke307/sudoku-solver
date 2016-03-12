@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
@@ -27,6 +28,7 @@ import com.perivi.sudoku.java.Strategy;
 
 public class AppShell {
 	private static List<SudokuCell> allCells = new ArrayList<>();
+	private static Label fileLabel;
 
 	public static void main(final String[] args) throws IOException {
 		final Display display = new Display();
@@ -119,6 +121,7 @@ public class AppShell {
 						}
 
 						solver.getStrategyCounters().clear();
+						fileLabel.setText(filename);
 					}
 					catch (final IllegalArgumentException | IOException e) {
 						final MessageBox msg = new MessageBox(shell, SWT.ICON_ERROR);
@@ -128,6 +131,13 @@ public class AppShell {
 				}
 			}
 		});
+		
+		fileLabel = new Label(shell, SWT.NONE);
+		fileLabel.setText("449");
+		final GridData gd_fileLabel = new GridData();
+		gd_fileLabel.horizontalSpan = 6;
+		gd_fileLabel.horizontalAlignment = GridData.FILL;
+		fileLabel.setLayoutData(gd_fileLabel);
 
 
 		shell.pack();
