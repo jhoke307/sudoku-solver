@@ -1,18 +1,12 @@
 package com.perivi.sudoku.java;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.perivi.sudoku.java.Grid.CellState;
 import com.perivi.sudoku.java.Grid.House;
 
 /**
@@ -61,6 +55,7 @@ public class BacktrackingStrategy implements Strategy {
                 final Set<Integer> validSet = new HashSet<>(stateMap.get(Checker.State.VALID));
                 if (validSet.size() == 1) {
                     cell.setValue(validSet.iterator().next());
+                    cell.setState(CellState.HINT);
                     return Boolean.TRUE;
                 }
             }

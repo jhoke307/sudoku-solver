@@ -3,6 +3,7 @@ package com.perivi.sudoku.java;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.perivi.sudoku.java.Grid.CellState;
 import com.perivi.sudoku.java.Grid.House;
 
 /**
@@ -39,6 +40,7 @@ public class SinglePossibilityStrategy implements Strategy {
 //                            houseValues,
 //                            remainingPossibilities));
                     input.cellAt(i, j).setValue(remainingPossibilities.iterator().next());
+                    input.cellAt(i, j).setState(CellState.HINT);
                     return Boolean.TRUE;
                 }
             }

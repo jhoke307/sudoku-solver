@@ -12,6 +12,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.perivi.sudoku.java.Grid.CellState;
 import com.perivi.sudoku.java.Grid.House;
 
 /**
@@ -199,6 +200,7 @@ public class NakedMultiplesStrategy implements Strategy {
                     System.out.println(
                             String.format("cell(%s) has only one possibility %s after elimination", cells.get(i), ps));
                     cells.get(i).setValue(ps.iterator().next());
+                    cells.get(i).setState(CellState.HINT);
                     return Boolean.TRUE;
                 }
             }

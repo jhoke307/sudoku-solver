@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+import com.perivi.sudoku.java.Grid.CellState;
 
 /**
  * If there is only one remaining possibility in a row or column, it must fill
@@ -19,6 +20,16 @@ public class OnlyChoiceStrategy implements Strategy {
             final Set<Integer> valueSet = Sets.newHashSet(values);
             final Set<Integer> remainingPossibilities =
                     Sets.difference(Grid.ALL_POSSIBILITIES, valueSet);
+
+            // Update notes.
+//            for (final Grid.Cell c : section) {
+//            	for (final Integer p : c.getNotes()) {
+//            		if (!remainingPossibilities.contains(p)) {
+//            			c.removeNote(p);
+//            		}
+//            	}
+//            }
+
             if (remainingPossibilities.size() == 1) {
                 final Integer lastPossibility = remainingPossibilities.iterator().next();
                 for (final Grid.Cell c : section) {
@@ -26,6 +37,7 @@ public class OnlyChoiceStrategy implements Strategy {
 //                        System.out.println(String.format("Section %s seems like only possibility for this cell is: %s",
 //                                section, lastPossibility));
                         c.setValue(lastPossibility);
+                        c.setState(CellState.HINT);
                         return Boolean.TRUE;
                     }
                 }

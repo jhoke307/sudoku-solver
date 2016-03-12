@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import com.perivi.sudoku.java.Grid.CellState;
 
 public class Checker {
     public enum State {
@@ -52,6 +53,12 @@ public class Checker {
 
         for (final Integer i : Grid.ALL_POSSIBILITIES) {
             if (valueSet.count(i) > 1) {
+            	for (final Grid.Cell c : section) {
+            		if (i.equals(c.getValue())) {
+            			c.setState(CellState.INVALID);
+            		}
+            	}
+
                 return State.INVALID;
             }
         }

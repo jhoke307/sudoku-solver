@@ -2,6 +2,7 @@ package com.perivi.sudoku.java;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,13 @@ import lombok.Getter;
 
 @EqualsAndHashCode
 public class Grid {
+	public enum CellState {
+		INPUT,
+		VALID,
+		INVALID,
+		HINT;
+	}
+
     public final static Set<Integer> ALL_POSSIBILITIES = Sets.newHashSet(1, 2, 3, 4, 5, 6, 7, 8, 9);
     public final static int DEFAULT_WIDTH = 9;
     public final static int DEFAULT_HEIGHT = 9;
@@ -47,11 +55,30 @@ public class Grid {
             throw new IllegalArgumentException("height must be an integral multiple of houseHeight");
         }
 
+        final CellListener listener = new CellListener() {
+        	@Override
+        	public void cellUpdated(Cell c) {
+        		final Integer value = c.getValue();
+
+        		if (value != null) {
+        			final Iterable<Grid.Cell> cells =
+        					Iterables.concat(row(c.getRow()), column(c.getCol()),
+        							houseContaining(c.getRow(), c.getCol()));
+        			for (final Grid.Cell otherCell : cells) {
+        				if (!c.equals(otherCell)) {
+        					otherCell.removeNote(value);
+        				}
+        			}
+        		}
+        	}
+        };
+
         gridData = new Cell[height][];
         for (int i = 0; i < height; ++i) {
             gridData[i] = new Cell[width];
             for (int j = 0; j < width; ++j) {
                 gridData[i][j] = new Cell(i, j);
+                gridData[i][j].addListener(listener);
             }
         }
     }
@@ -61,6 +88,8 @@ public class Grid {
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 cellAt(i, j).setValue(source.cellAt(i, j).getValue());
+                cellAt(i, j).setNotes(source.cellAt(i,  j).getNotes());
+                cellAt(i, j).setState(source.cellAt(i,  j).getState());
             }
         }
     }
@@ -85,6 +114,16 @@ public class Grid {
         final int houseRow = row / getHouseHeight();
         final int houseCol = col / getHouseWidth();
         return house(houseRow, houseCol);
+    }
+
+    public Iterable<Cell> cells() {
+    	final List<Cell> l = new ArrayList<>(width * height);
+    	for (int i = 0; i < height; ++i) {
+    		for (int j = 0; j < width; ++j) {
+    			l.add(cellAt(i, j));
+    		}
+    	}
+    	return l;
     }
 
     public Iterable<Column> columns() {
@@ -175,6 +214,7 @@ public class Grid {
                 final char c = lines[i].charAt(j);
                 if (c != ' ') {
                     instance.cellAt(i, j).setValue(Integer.parseInt(Character.toString(c)));
+                    instance.cellAt(i, j).setState(CellState.INPUT);
                 }
             }
         }
@@ -187,6 +227,43 @@ public class Grid {
         private final int row;
         private final int col;
         private Integer value;
+        private CellState state;
+        private Set<Integer> notes = new HashSet<>(Grid.ALL_POSSIBILITIES);
+        private List<CellListener> listeners = new ArrayList<>();
+
+        public void setValue(Integer value) {
+        	this.value = value;
+        	this.notes.clear();
+        	notifyListeners();
+        }
+
+        public void setState(CellState state) {
+        	this.state = state;
+        	notifyListeners();
+        }
+
+        public void addNote(Integer n) {
+        	notes.add(n);
+        }
+
+        public void removeNote(Integer n) {
+        	notes.remove(n);
+        }
+
+        public void addListener(CellListener l) {
+        	listeners.add(l);
+        	l.cellUpdated(this);
+        }
+
+        private void notifyListeners() {
+        	for (final CellListener l : listeners) {
+        		l.cellUpdated(this);
+        	}
+        }
+    }
+
+    public interface CellListener {
+    	void cellUpdated(Cell c);
     }
 
     @Data

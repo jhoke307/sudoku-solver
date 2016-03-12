@@ -23,6 +23,7 @@ sourceSets {
 dependencies {
     provided "org.projectlombok:lombok:1.16.8"
     compile 'com.google.guava:guava:19.0'
+    // compile 'swt:swt-linux-gtk:3.0.1'
 }
 
 run {

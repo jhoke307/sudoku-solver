@@ -9,6 +9,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
+import com.perivi.sudoku.java.Grid.CellState;
 import com.perivi.sudoku.java.Grid.House;
 
 /**
@@ -59,6 +60,7 @@ public class OnlySquareStrategy implements Strategy {
 //                            System.out.println(String.format("cell(%s) is the only one in %s that can be %s",
 //                                    cells.get(j), section, p));
                             cells.get(j).setValue(p);
+                            cells.get(j).setState(CellState.HINT);
                             return Boolean.TRUE;
                         }
                     }
