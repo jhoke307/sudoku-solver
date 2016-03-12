@@ -31,13 +31,13 @@ public class SinglePossibilityStrategy implements Strategy {
                         Sets.union(rowValues, Sets.union(colValues, houseValues)));
 
                 if (remainingPossibilities.size() == 1) {
-                    System.out.println(String.format("cell(%d,%d): rowValues %s, colValues %s, %s houseValues %s: remainingPossibilities %s",
-                            i, j,
-                            rowValues,
-                            colValues,
-                            houseContaining,
-                            houseValues,
-                            remainingPossibilities));
+//                    System.out.println(String.format("cell(%d,%d): rowValues %s, colValues %s, %s houseValues %s: remainingPossibilities %s",
+//                            i, j,
+//                            rowValues,
+//                            colValues,
+//                            houseContaining,
+//                            houseValues,
+//                            remainingPossibilities));
                     input.cellAt(i, j).setValue(remainingPossibilities.iterator().next());
                     return Boolean.TRUE;
                 }

@@ -24,8 +24,8 @@ public class Checker {
         for (final Iterable<Grid.Cell> section : g.sections()) {
             final State result = checkOneSection(section);
             if (result.equals(State.INVALID)) {
-                System.out.println(String.format("section %s seems to be invalid: %s",
-                        section, Grid.values(section)));
+//                System.out.println(String.format("section %s seems to be invalid: %s",
+//                        section, Grid.values(section)));
                 return State.INVALID;
             }
 

@@ -23,8 +23,8 @@ public class OnlyChoiceStrategy implements Strategy {
                 final Integer lastPossibility = remainingPossibilities.iterator().next();
                 for (final Grid.Cell c : section) {
                     if (c.getValue() == null) {
-                        System.out.println(String.format("Section %s seems like only possibility for this cell is: %s",
-                                section, lastPossibility));
+//                        System.out.println(String.format("Section %s seems like only possibility for this cell is: %s",
+//                                section, lastPossibility));
                         c.setValue(lastPossibility);
                         return Boolean.TRUE;
                     }

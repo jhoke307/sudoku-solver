@@ -17,6 +17,7 @@ public class SudokuSolver {
         strategies.add(new SinglePossibilityStrategy());
         strategies.add(new OnlySquareStrategy());
         strategies.add(new NakedMultiplesStrategy());
+        strategies.add(new BacktrackingStrategy());
     }
 
     public static void main(String[] args) throws IOException {
@@ -26,11 +27,13 @@ public class SudokuSolver {
         }
 
         final Grid originalGrid = loadGrid(args[0]);
-        final Grid solutionGrid = args[1] != null ? loadGrid(args[1]) : null;
+        final Grid solutionGrid = (args.length == 2) ? loadGrid(args[1]) : null;
         System.out.println("loaded grid:");
         System.out.print(originalGrid.toString());
         System.out.println("state: " + Checker.check(originalGrid));
-        System.out.println("solution state: " + Checker.check(solutionGrid));
+        if (solutionGrid != null) {
+            System.out.println("solution state: " + Checker.check(solutionGrid));
+        }
         System.out.println();
 
         // Try to solve it
@@ -41,7 +44,9 @@ public class SudokuSolver {
             lastGrid = currentGrid;
             currentGrid = new Grid(lastGrid);
 
-            checkAgainstSolution(currentGrid, solutionGrid);
+            if (solutionGrid != null) {
+                checkAgainstSolution(currentGrid, solutionGrid);
+            }
 
             for (final Strategy strategy : strategies) {
                 if (strategy.apply(currentGrid) == Boolean.TRUE) {

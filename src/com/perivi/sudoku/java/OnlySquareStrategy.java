@@ -56,8 +56,8 @@ public class OnlySquareStrategy implements Strategy {
                     // Find the cell it applied to
                     for (int j = 0; j < possibilities.size(); ++j) {
                         if (possibilities.get(j).contains(p) && cells.get(j).getValue() == null) {
-                            System.out.println(String.format("cell(%s) is the only one in %s that can be %s",
-                                    cells.get(j), section, p));
+//                            System.out.println(String.format("cell(%s) is the only one in %s that can be %s",
+//                                    cells.get(j), section, p));
                             cells.get(j).setValue(p);
                             return Boolean.TRUE;
                         }
