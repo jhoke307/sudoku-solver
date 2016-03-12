@@ -39,6 +39,7 @@ public class AppShell {
 		final Grid inputGrid = loadGrid("data/puzzle449.txt");
 		final GridLayout layout = new GridLayout(9, true);
 		shell.setLayout(layout);
+		shell.setText("Sudoku Solver");
 		
 		System.out.print(inputGrid.toString());
 
@@ -96,6 +97,7 @@ public class AppShell {
 			public void widgetSelected(SelectionEvent arg0) {
 				final FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 				dlg.setFilterExtensions(new String[] { "*.txt" });
+				dlg.setText("Choose a file");
 				final String filename = dlg.open();
 				if (Strings.isNullOrEmpty(filename)) {
 				}
