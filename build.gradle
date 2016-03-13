@@ -4,7 +4,10 @@ apply plugin: 'application'
 mainClassName = "com.perivi.sudoku.java.SudokuSolver"
 
 repositories {
-	jcenter()
+    jcenter()
+    maven {
+        url "https://swt-repo.googlecode.com/svn/repo/"
+    }
 }
 
 configurations {
@@ -20,14 +23,22 @@ sourceSets {
     }
 }
 
+apply from: 'gradle/swt.gradle'
+
 dependencies {
+    // compile 'swt:swt-linux-gtk:3.0.1'
+    compile "org.eclipse.swt:${swtArtifactName}:${swtVersion}"
     provided "org.projectlombok:lombok:1.16.8"
     compile 'com.google.guava:guava:19.0'
-    // compile 'swt:swt-linux-gtk:3.0.1'
 }
 
 run {
     if (project.hasProperty('args')) {
         args project.args.split('\\s+')
     }
+}
+
+task runGui(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'com.perivi.sudoku.java.gui.AppShell'
 }
