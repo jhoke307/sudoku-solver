@@ -1,15 +1,14 @@
 package com.perivi.sudoku.java;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * If four cells are the corners of a square and they are the only possibilities
@@ -19,91 +18,131 @@ import com.google.common.collect.Multiset;
  *
  */
 public class XWingStrategy implements Strategy {
-
 	@Override
-	public Boolean apply(Grid input) {
-		// TODO I think this is only half, it looks for the columns first
-		final Map<Integer, Multimap<Integer, Integer>> colToPToRows = new HashMap<>();
+	public Boolean apply(final Grid input) {
+	    for (final Integer possibility : Grid.ALL_POSSIBILITIES) {
+//	        System.out.println("Considering " + possibility);
 
-		for (final Grid.Column col : input.columns()) {
-			final Multimap<Integer, Integer> pToRows = HashMultimap.create();
+	        final Map<Grid.Column, Set<Grid.Cell>> columnsWithPossibleCells = new HashMap<>();
+	        final PossibleCellPredicate pred = new PossibleCellPredicate(possibility);
 
-			for (final Grid.Cell cell : col) {
-				for (final Integer p : cell.getNotes()) {
-					pToRows.put(p, cell.getRow());
-				}
-			}
+	        for (final Grid.Column col : input.columns()) {
+	            final List<Grid.Cell> possibleCells = Lists.newArrayList(Iterables.filter(col, pred));
+//	            System.out.println("Column " + col.getColumn() + ": possible cells: " + possibleCells);
+	            if (possibleCells.size() == 2) {
+	                columnsWithPossibleCells.put(col, new HashSet<>(possibleCells));
+	            }
+	        }
 
-			colToPToRows.put(col.getColumn(), pToRows);
-		}
+	        final List<Grid.Column> possibleColumns = Lists.newArrayList(columnsWithPossibleCells.keySet()); 
+	        for (int i = 0; i < possibleColumns.size(); i++) {
+	            // What are the possible rows for this column? Do they match the other column?
+	            final Grid.Column colI = possibleColumns.get(i);
+	            final Set<Grid.Cell> possibleCellsI = columnsWithPossibleCells.get(colI); 
+	            final Set<Integer> possibleRowsI = new HashSet<>();
 
-		// Now for each column, if it has only two cells for a possibility,
-		// count it as potential. If between any two such columns the cells
-		// line up in the same row, we can do the X-Wing
-		for (final Integer p : Grid.ALL_POSSIBILITIES) {
-			final Multiset<Integer> rowCount = HashMultiset.create();
-			final Set<Integer> colsWithTwo = new HashSet<>();
+	            for (final Grid.Cell cell : possibleCellsI) {
+	                possibleRowsI.add(cell.getRow());
+	            }
 
-			for (final Integer col : colToPToRows.keySet()) {
-				final Multimap<Integer, Integer> pToRows = colToPToRows.get(col);
-				final Collection<Integer> rows = pToRows.asMap().get(p);
-				if (rows != null && rows.size() == 2) {
-					colsWithTwo.add(col);
-					for (final Integer row : colToPToRows.get(col).asMap().get(p)) {
-						rowCount.add(row);
-					}
-				}
-			}
+	            for (int j = i + 1; j < possibleColumns.size(); j++) {
+	                final Grid.Column colJ = possibleColumns.get(j);
+	                final Set<Grid.Cell> possibleCellsJ = columnsWithPossibleCells.get(colJ);
+	                final Set<Integer> possibleRowsJ = new HashSet<>();
 
-			final Set<Integer> rowsWithTwo = new HashSet<>();
-			for (final Integer row : rowCount.elementSet()) {
-				if (rowCount.count(row) == 2) {
-					rowsWithTwo.add(row);
-				}
-			}
+	                for (final Grid.Cell cell : possibleCellsJ) {
+	                    possibleRowsJ.add(cell.getRow());
+	                }
 
-			if (rowsWithTwo.size() == 2) {
-				final Set<Grid.Cell> matchingCells = new HashSet<>();
-				boolean clearedNote = false;
+	                if (possibleRowsI.equals(possibleRowsJ)) {
+	                    // Apply X-wing to this row and column
+	                    final Set<Integer> columns = Sets.newHashSet(colI.getColumn(), colJ.getColumn());
+	                    if (zap(input, possibility, possibleRowsI, columns)) {
+	                        System.out.println("Applied X-Wing, rows " + possibleRowsI + " columns " + columns);
+	                        return Boolean.TRUE;
+	                    }
+	                }
 
-				for (final Integer col : colsWithTwo) {
-					for (final Integer row : rowsWithTwo) {
-						matchingCells.add(input.cellAt(row, col));
-					}
-				}
-				
-				for (final Integer col : colsWithTwo) {
-					for (final Grid.Cell cell : input.column(col)) {
-						if (!matchingCells.contains(cell)) {
-							if (cell.getNotes().contains(p)) {
-								System.out.println("applying X-Wing to cell " + cell + " possibility " + p);
-								cell.removeNote(p);
-								clearedNote = true;
-							}
-						}
-					}
-				}
+	            }
+	        }
+	    }
 
-				for (final Integer row : rowsWithTwo) {
-					for (final Grid.Cell cell : input.row(row)) {
-						if (!matchingCells.contains(cell)) {
-							if (cell.getNotes().contains(p)) {
-								System.out.println("applying X-Wing to cell " + cell + " possibility " + p);
-								cell.removeNote(p);
-								clearedNote = true;
-							}
-						}
-					}
-				}
+	    for (final Integer possibility : Grid.ALL_POSSIBILITIES) {
+//	        System.out.println("Considering " + possibility);
 
-				if (clearedNote) {
-					System.out.println("Applied X-Wing, rows " + rowsWithTwo + " columns " + colsWithTwo);
-					return Boolean.TRUE;
-				}
-			}
-		}
+	        final Map<Grid.Row, Set<Grid.Cell>> rowsWithPossibleCells = new HashMap<>();
+	        final PossibleCellPredicate pred = new PossibleCellPredicate(possibility);
 
-		return null;
+	        for (final Grid.Row col : input.rows()) {
+	            final List<Grid.Cell> possibleCells = Lists.newArrayList(Iterables.filter(col, pred));
+//	            System.out.println("Column " + col.getColumn() + ": possible cells: " + possibleCells);
+	            if (possibleCells.size() == 2) {
+	                rowsWithPossibleCells.put(col, new HashSet<>(possibleCells));
+	            }
+	        }
+
+	        final List<Grid.Row> possibleRows = Lists.newArrayList(rowsWithPossibleCells.keySet()); 
+	        for (int i = 0; i < possibleRows.size(); i++) {
+	            // What are the possible rows for this column? Do they match the other column?
+	            final Grid.Row rowI = possibleRows.get(i);
+	            final Set<Grid.Cell> possibleCellsI = rowsWithPossibleCells.get(rowI); 
+	            final Set<Integer> possibleColsI = new HashSet<>();
+
+	            for (final Grid.Cell cell : possibleCellsI) {
+	                possibleColsI.add(cell.getCol());
+	            }
+
+	            for (int j = i + 1; j < possibleRows.size(); j++) {
+	                final Grid.Row rowJ = possibleRows.get(j);
+	                final Set<Grid.Cell> possibleCellsJ = rowsWithPossibleCells.get(rowJ);
+	                final Set<Integer> possibleColsJ = new HashSet<>();
+
+	                for (final Grid.Cell cell : possibleCellsJ) {
+	                    possibleColsJ.add(cell.getRow());
+	                }
+
+	                if (possibleColsJ.equals(possibleColsI)) {
+	                    // Apply X-wing to this row and column
+	                    final Set<Integer> rows = Sets.newHashSet(rowI.getRow(), rowJ.getRow());
+	                    if (zap(input, possibility, rows, possibleColsI)) {
+	                        System.out.println("Applied X-Wing, rows " + rows + " columns " + possibleColsI);
+	                        return Boolean.TRUE;
+	                    }
+	                }
+	            }
+	        }
+	    }
+
+		return Boolean.FALSE;
+	}
+
+	private boolean zap(final Grid grid, final Integer possibility,
+	        final Set<Integer> rows, final Set<Integer> columns) {
+	    boolean zappedAny = false;
+
+	    for (final Integer row : rows) {
+	        final Grid.Row gridRow = grid.row(row);
+	        for (final Grid.Cell cell : gridRow) {
+	            if (!columns.contains(cell.getCol()) && cell.containsNote(possibility)) {
+	                zappedAny = true;
+	                System.out.println("applying X-Wing to row " + row + " cell " + cell + " possibility " + possibility);
+	                cell.removeNote(possibility);
+	            }
+	        }
+	    }
+
+	    for (final Integer col : columns) {
+	        final Grid.Column gridCol = grid.column(col);
+	        for (final Grid.Cell cell : gridCol) {
+	            if (!rows.contains(cell.getRow()) && cell.containsNote(possibility)) {
+	                zappedAny = true;
+	                System.out.println("applying X-Wing to col " + col + " cell " + cell + " possibility " + possibility);
+	                cell.removeNote(possibility);
+	            }
+	        }
+	    }
+
+	    return zappedAny;
 	}
 
 }
