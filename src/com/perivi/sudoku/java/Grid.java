@@ -240,22 +240,32 @@ public class Grid {
         }
 
         public void setValue(Integer value) {
-        	this.value = value;
-        	this.notes.clear();
-        	notifyListeners();
+            if (!Objects.equals(value, this.value)) {
+                this.value = value;
+                this.notes.clear();
+                notifyListeners();
+            }
         }
 
         public void setState(CellState state) {
-        	this.state = state;
-        	notifyListeners();
+            if (!Objects.equals(state, this.state)) {
+                this.state = state;
+                notifyListeners();
+            }
         }
 
         public void addNote(Integer n) {
-        	notes.add(n);
+            if (!containsNote(n)) {
+                notes.add(n);
+                notifyListeners();
+            }
         }
 
         public void removeNote(Integer n) {
-        	notes.remove(n);
+            if (containsNote(n)) {
+                notes.remove(n);
+                notifyListeners();
+            }
         }
 
         public boolean containsNote(Integer n) {
@@ -267,7 +277,7 @@ public class Grid {
         	l.cellUpdated(this);
         }
 
-        private void notifyListeners() {
+        public void notifyListeners() {
         	for (final CellListener l : listeners) {
         		l.cellUpdated(this);
         	}

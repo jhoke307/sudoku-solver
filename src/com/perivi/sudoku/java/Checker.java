@@ -51,6 +51,13 @@ public class Checker {
             return State.SOLVED;
         }
 
+        for (final Grid.Cell cell : section) {
+            if (cell.getValue() == null && cell.getNotes().size() == 0) {
+                cell.setState(CellState.INVALID);
+                return State.INVALID;
+            }
+        }
+
         for (final Integer i : Grid.ALL_POSSIBILITIES) {
             if (valueSet.count(i) > 1) {
             	for (final Grid.Cell c : section) {

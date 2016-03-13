@@ -15,7 +15,7 @@ import com.perivi.sudoku.java.Grid;
 public class SudokuHouse extends Composite {
 	private final List<SudokuCell> cells = new ArrayList<>();
 
-	public SudokuHouse(final Grid.House house, final Composite parent, final int bits) {
+	public SudokuHouse(final Grid.House house, final SudokuGrid parent, final int bits) {
 		super(parent, bits);
 
 		final GridLayout layout = new GridLayout(3, true);
@@ -32,7 +32,7 @@ public class SudokuHouse extends Composite {
 
 		for (final Grid.Cell cell : house) {
 			final SudokuCell w = new SudokuCell(this, SWT.NONE);
-			cell.addListener(new CellController(w));
+			cell.addListener(new CellController(parent, w, cell));
 			cells.add(w);
 		}
 	}

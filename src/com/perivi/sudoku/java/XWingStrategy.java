@@ -58,7 +58,7 @@ public class XWingStrategy implements Strategy {
 	                    // Apply X-wing to this row and column
 	                    final Set<Integer> columns = Sets.newHashSet(colI.getColumn(), colJ.getColumn());
 	                    if (zap(input, possibility, possibleRowsI, columns)) {
-	                        System.out.println("Applied X-Wing, rows " + possibleRowsI + " columns " + columns);
+	                        System.out.println("Applied X-Wing to " + possibility + ", rows " + possibleRowsI + " columns " + columns);
 	                        return Boolean.TRUE;
 	                    }
 	                }
@@ -105,7 +105,7 @@ public class XWingStrategy implements Strategy {
 	                    // Apply X-wing to this row and column
 	                    final Set<Integer> rows = Sets.newHashSet(rowI.getRow(), rowJ.getRow());
 	                    if (zap(input, possibility, rows, possibleColsI)) {
-	                        System.out.println("Applied X-Wing, rows " + rows + " columns " + possibleColsI);
+	                        System.out.println("Applied X-Wing to " + possibility + ", rows " + rows + " columns " + possibleColsI);
 	                        return Boolean.TRUE;
 	                    }
 	                }
@@ -127,6 +127,7 @@ public class XWingStrategy implements Strategy {
 	                zappedAny = true;
 	                System.out.println("applying X-Wing to row " + row + " cell " + cell + " possibility " + possibility);
 	                cell.removeNote(possibility);
+	                cell.notifyListeners();
 	            }
 	        }
 	    }
@@ -138,6 +139,16 @@ public class XWingStrategy implements Strategy {
 	                zappedAny = true;
 	                System.out.println("applying X-Wing to col " + col + " cell " + cell + " possibility " + possibility);
 	                cell.removeNote(possibility);
+	                cell.notifyListeners();
+	            }
+	        }
+	    }
+
+	    if (zappedAny) {
+	        // Highlight X-wing cells too
+	        for (final Integer row : rows) {
+	            for (final Integer col : columns) {
+	                grid.cellAt(row, col).notifyListeners();
 	            }
 	        }
 	    }

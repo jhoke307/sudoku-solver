@@ -48,6 +48,7 @@ public class Solver {
     		}
     	}
 
+    	System.out.println("Couldn't make any progress with any strategy. Halting.");
     	return false;
     }
 

@@ -6,6 +6,8 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
@@ -16,10 +18,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+import com.google.common.collect.Sets;
 import com.perivi.sudoku.java.Grid;
 
 class SudokuCell extends Canvas {
 	final private Color backgroundColor;
+	final private Color focusBackgroundColor;
 	final private Color highlightColor;
 	final private Color inputColor;
 	final private Color pencilColor;
@@ -33,19 +37,23 @@ class SudokuCell extends Canvas {
 	final private Point[] notePoints;
 
 	private boolean highlight;
+	private boolean focus;
 	private Integer mainNumber;
 	private Grid.CellState mainState;
 	private Set<Integer> noteNumbers = new HashSet<>();
+	private Set<Integer> savedNoteNumbers = new HashSet<>();
 
 	SudokuCell(Composite parent, int style) {
 		super(parent, style);
 
-		backgroundColor = new Color(null, 255, 255, 255);
+		backgroundColor = new Color(null, 220, 220, 220);
+		focusBackgroundColor = new Color(null, 255, 255, 255);
 		highlightColor = new Color(null, 249, 255, 82);
 		inputColor = new Color(null, 0, 0, 0);
 		pencilColor = new Color(null, 80, 80, 80);
 		hintColor = new Color(null, 0, 155, 157);
-		noteColor = new Color(null, 128, 160, 255);
+		// noteColor = new Color(null, 128, 160, 255);
+		noteColor = new Color(null, 160, 160, 160);
 		invalidColor = new Color(null, 255, 80, 80);
 
 		setBackground(backgroundColor);
@@ -84,10 +92,23 @@ class SudokuCell extends Canvas {
 				SudokuCell.this.paintControl(arg0);
 			}
 		});
+		
+		addFocusListener(new FocusListener() {
+		    @Override
+		    public void focusGained(FocusEvent e) {
+		        setFocus(true);
+		    }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                setFocus(false);
+            }
+		});
 	}
 
 	private void widgetDisposed(DisposeEvent arg0) {
 		backgroundColor.dispose();
+		focusBackgroundColor.dispose();
 		highlightColor.dispose();
 		inputColor.dispose();
 		pencilColor.dispose();
@@ -123,10 +144,20 @@ class SudokuCell extends Canvas {
 		}
 		else {
 			gc.setFont(noteFont);
-			gc.setForeground(noteColor);
 
-			for (final Integer note : noteNumbers) {
+			for (final Integer note : Sets.union(noteNumbers, savedNoteNumbers)) {
 				final int n = note.intValue();
+				
+				if (noteNumbers.contains(n) && savedNoteNumbers.contains(n)) {
+				    gc.setForeground(noteColor);
+				}
+				else if (noteNumbers.contains(n)) {
+				    gc.setForeground(hintColor);
+				}
+				else if (savedNoteNumbers.contains(n)) {
+				    gc.setForeground(invalidColor);
+				}
+
 				gc.drawString(note.toString(), 1 + notePoints[n].x, 1 + notePoints[n].y);
 			}
 		}
@@ -153,6 +184,18 @@ class SudokuCell extends Canvas {
 			height = hHint;
 
 		return new Point(width + 2, height + 2);
+	}
+
+	private void updateBackground() {
+	    if (isHighlight()) {
+	        setBackground(highlightColor);
+	    }
+	    else if (isFocus()) {
+	        setBackground(focusBackgroundColor);
+	    }
+	    else {
+	        setBackground(backgroundColor);
+	    }
 	}
 
 	public Integer getMainNumber() {
@@ -187,8 +230,24 @@ class SudokuCell extends Canvas {
 	}
 
 	public void setHighlight(boolean highlight) {
+	    // Refresh the set of note numbers.
+		if (!highlight) {
+		    savedNoteNumbers.clear();
+		    savedNoteNumbers.addAll(noteNumbers);
+		}
+
 		this.highlight = highlight;
-		setBackground(highlight ? highlightColor : backgroundColor);
+		updateBackground();
 		redraw();
+	}
+	
+	private boolean isFocus() {
+	    return focus;
+	}
+
+	private void setFocus(final boolean focus) {
+	    this.focus = focus;
+	    updateBackground();
+	    redraw();
 	}
 }

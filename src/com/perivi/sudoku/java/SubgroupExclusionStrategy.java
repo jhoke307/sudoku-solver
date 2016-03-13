@@ -45,6 +45,7 @@ public class SubgroupExclusionStrategy implements Strategy {
 					for (final Grid.Cell cell : row) {
 						if (!house.contains(cell) && cell.getNotes().contains(entry.getKey())) {
 							cell.removeNote(entry.getKey());
+							cell.notifyListeners();
 							System.out.println("Applying subgroup exclusion to row " + row + " to eliminate " + entry.getKey() + " from " + cell);
 							System.out.println("subgroup was: " + house.subRow(entry.getValue().iterator().next()));
 							clearedNotes = true;
@@ -84,6 +85,7 @@ public class SubgroupExclusionStrategy implements Strategy {
 					for (final Grid.Cell cell : col) {
 						if (!house.contains(cell) && cell.getNotes().contains(entry.getKey())) {
 							cell.removeNote(entry.getKey());
+							cell.notifyListeners();
 							System.out.println("Applying subgroup exclusion to col " + col + " to eliminate " + entry.getKey() + " from " + cell);
 							clearedNotes = true;
 						}

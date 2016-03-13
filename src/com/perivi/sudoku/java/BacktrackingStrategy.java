@@ -48,12 +48,15 @@ public class BacktrackingStrategy implements Strategy {
 
                 final Set<Integer> solutionSet = new HashSet<>(stateMap.get(Checker.State.SOLVED));
                 if (solutionSet.size() == 1) {
+                    System.out.println("Backtrack: Settled on value for " + cell + ": " + solutionSet);
                     cell.setValue(solutionSet.iterator().next());
+                    cell.setState(CellState.HINT);
                     return Boolean.TRUE;
                 }
 
                 final Set<Integer> validSet = new HashSet<>(stateMap.get(Checker.State.VALID));
                 if (validSet.size() == 1) {
+                    System.out.println("Backtrack: Settled on value for " + cell + ": " + validSet);
                     cell.setValue(validSet.iterator().next());
                     cell.setState(CellState.HINT);
                     return Boolean.TRUE;

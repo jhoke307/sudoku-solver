@@ -9,8 +9,6 @@ import com.perivi.sudoku.java.Grid.CellState;
  * If there is only one remaining possibility in a row or column, it must fill
  * the remaining cell.
  *
- * This actually does nothing since the SinglePossibilityStrategy supersedes it.
- *
  * @author jdh
  *
  */
@@ -27,10 +25,14 @@ public class OnlyChoiceStrategy implements Strategy {
 
 	        if (emptyCells.size() == 1) {
 	            final Grid.Cell cell = emptyCells.get(0);
-	            System.out.println("empty cell " + cell + " has only choice for " + cell.getNotes());
-	            cell.setValue(cell.getNotes().iterator().next());
-	            cell.setState(CellState.HINT);
-	            return Boolean.TRUE;
+	            if (cell.getNotes().size() == 1) {
+	                // It's legitimate for this if to fail if the
+	                // BacktrackingStrategy is running. That's the whole point!
+	                System.out.println("empty cell " + cell + " has only choice for " + cell.getNotes());
+	                cell.setValue(cell.getNotes().iterator().next());
+	                cell.setState(CellState.HINT);
+	                return Boolean.TRUE;
+	            }
 	        }
 	    }
 		return Boolean.FALSE;
