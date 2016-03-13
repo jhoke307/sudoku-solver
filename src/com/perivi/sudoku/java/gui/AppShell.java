@@ -49,6 +49,8 @@ public class AppShell {
 		gd_widgetGrid.horizontalSpan = 9;
 		widgetGrid.setLayoutData(gd_widgetGrid);
 
+		widgetGrid.clearHighlight();
+
 		final Solver solver = Solver.smartSolver();
 		final Button stepButton = new Button(shell, SWT.NONE);
 		stepButton.setText("Step");
@@ -117,6 +119,7 @@ public class AppShell {
 						}
 
 						solver.getStrategyCounters().clear();
+						widgetGrid.clearHighlight();
 						fileLabel.setText(filename);
 					}
 					catch (final IllegalArgumentException | IOException e) {
