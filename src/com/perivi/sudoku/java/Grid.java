@@ -88,7 +88,7 @@ public class Grid {
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 cellAt(i, j).setValue(source.cellAt(i, j).getValue());
-                cellAt(i, j).setNotes(source.cellAt(i,  j).getNotes());
+                cellAt(i, j).setNotes(Sets.newHashSet(source.cellAt(i,  j).getNotes()));
                 cellAt(i, j).setState(source.cellAt(i,  j).getState());
             }
         }
