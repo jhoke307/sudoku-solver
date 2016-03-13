@@ -16,6 +16,7 @@ public class SudokuSolver {
         strategies.add(new OnlyChoiceStrategy());
         strategies.add(new SinglePossibilityStrategy());
         strategies.add(new OnlySquareStrategy());
+        strategies.add(new SubgroupExclusionStrategy());
         strategies.add(new NakedMultiplesStrategy());
         strategies.add(new BacktrackingStrategy());
     }
@@ -83,6 +84,11 @@ public class SudokuSolver {
                 if (v != null && x != null && !v.equals(x)) {
                     System.out.println(String.format("current and solution disagree on %s: current says %s, solution %s",
                             current.cellAt(i, j), v, x));
+                    throw new IllegalStateException("Puzzle in progress and solution disagree");
+                }
+                else if (v == null && !current.cellAt(i, j).getNotes().contains(x)) {
+                	System.out.println(String.format("current NOTES and solution disagree on %s: current says %d is not a possibility.",
+                			current.cellAt(i, j), x));
                     throw new IllegalStateException("Puzzle in progress and solution disagree");
                 }
             }

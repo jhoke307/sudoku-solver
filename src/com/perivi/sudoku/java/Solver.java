@@ -14,6 +14,7 @@ public class Solver {
         smartStrategies.add(new OnlyChoiceStrategy());
         smartStrategies.add(new SinglePossibilityStrategy());
         smartStrategies.add(new OnlySquareStrategy());
+        smartStrategies.add(new SubgroupExclusionStrategy());
         smartStrategies.add(new NakedMultiplesStrategy());
     }
     private final static List<Strategy> allStrategies = new ArrayList<>(smartStrategies);

@@ -231,6 +231,14 @@ public class Grid {
         private Set<Integer> notes = new HashSet<>(Grid.ALL_POSSIBILITIES);
         private List<CellListener> listeners = new ArrayList<>();
 
+        public Row getRowObject() {
+        	return new Row(row);
+        }
+
+        public Column getColumnObject() {
+        	return new Column(col);
+        }
+
         public void setValue(Integer value) {
         	this.value = value;
         	this.notes.clear();
@@ -305,6 +313,31 @@ public class Grid {
 
         public Cell cell(final int r, final int c) {
             return gridData[row * houseHeight + r][column * houseWidth + c];
+        }
+
+        public boolean contains(Cell c) {
+        	final int upper = row * houseHeight;
+        	final int lower = upper + houseHeight;
+        	final int left = column * houseWidth;
+        	final int right = left + houseWidth;
+        	return c.getRow() >= upper && c.getRow() < lower &&
+        			c.getCol() >= left && c.getCol() < right;
+        }
+
+        public Iterable<Cell> subRow(final int row) {
+        	final List<Cell> l = new ArrayList<>();
+        	for (int i = 0; i < houseWidth; ++i) {
+        		l.add(cell(row, i));
+        	}
+        	return l;
+        }
+
+        public Iterable<Cell> subColumn(final int col) {
+        	final List<Cell> l = new ArrayList<>();
+        	for (int i = 0; i < houseHeight; ++i) {
+        		l.add(cell(i, col));
+        	}
+        	return l;
         }
 
         @Override

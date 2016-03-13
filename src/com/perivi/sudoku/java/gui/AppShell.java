@@ -22,12 +22,10 @@ import org.eclipse.swt.widgets.Shell;
 import com.google.common.base.Strings;
 import com.google.common.collect.Multiset;
 import com.perivi.sudoku.java.Grid;
-import com.perivi.sudoku.java.Grid.Cell;
 import com.perivi.sudoku.java.Solver;
 import com.perivi.sudoku.java.Strategy;
 
 public class AppShell {
-	private static List<SudokuCell> allCells = new ArrayList<>();
 	private static Label fileLabel;
 
 	public static void main(final String[] args) throws IOException {
@@ -45,26 +43,24 @@ public class AppShell {
 		
 		System.out.print(inputGrid.toString());
 
-		for (final Grid.Cell cell : inputGrid.cells()) {
-			final SudokuCell w = new SudokuCell(shell, SWT.NONE);
-			cell.addListener(new CellController(w));
-			allCells.add(w);
-		}
+		final SudokuGrid widgetGrid = new SudokuGrid(inputGrid, shell, SWT.NONE);
+		final GridData gd_widgetGrid = new GridData();
+		gd_widgetGrid.horizontalAlignment = GridData.FILL;
+		gd_widgetGrid.horizontalSpan = 9;
+		widgetGrid.setLayoutData(gd_widgetGrid);
 
 		final Solver solver = Solver.smartSolver();
 		final Button stepButton = new Button(shell, SWT.NONE);
-		stepButton.setLayoutData(new GridData(9));
 		stepButton.setText("Step");
 		stepButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				clearHighlight();
+				widgetGrid.clearHighlight();
 				solver.solveStep(inputGrid);
 			}
 		});
 
 		final Button solveButton = new Button(shell, SWT.NONE);
-		solveButton.setLayoutData(new GridData(9));
 		solveButton.setText("Solve");
 		solveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -75,7 +71,7 @@ public class AppShell {
 					@Override
 					public void run() {
 
-						clearHighlight();
+						widgetGrid.clearHighlight();
 						if (solver.solveStep(inputGrid)) {
 							display.timerExec(interval, this);
 						}
@@ -149,32 +145,9 @@ public class AppShell {
 		display.dispose();
 	}
 
-	private static void clearHighlight() {
-		for (final SudokuCell c : allCells) {
-			c.setHighlight(false);
-		}
-	}
-
     private static Grid loadGrid(final String filename) throws IOException {
         final byte[] encoded = Files.readAllBytes(Paths.get(filename));
         final String puzzle =  new String(encoded, Charset.defaultCharset());
         return Grid.fromString(puzzle);
-    }
-
-    private static class CellController implements Grid.CellListener {
-    	SudokuCell widget;
-
-    	CellController(SudokuCell w) {
-    		widget = w;
-    	}
-
-		@Override
-		public void cellUpdated(Cell c) {
-			widget.setMainNumber(c.getValue());
-			widget.setMainState(c.getState());
-			widget.setNoteNumbers(c.getNotes());
-			widget.setHighlight(true);
-
-		}
     }
 }
