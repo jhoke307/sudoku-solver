@@ -258,6 +258,10 @@ public class Grid {
         	notes.remove(n);
         }
 
+        public boolean containsNote(Integer n) {
+            return notes.contains(n);
+        }
+
         public void addListener(CellListener l) {
         	listeners.add(l);
         	l.cellUpdated(this);
@@ -296,13 +300,17 @@ public class Grid {
             return gridData[idx][column];
         }
 
-        @Override
-        public Iterator<Cell> iterator() {
+        public List<Cell> asList() {
             final List<Cell> l = new ArrayList<>(height);
             for (int i = 0; i < height; ++i) {
                 l.add(cell(i));
             }
-            return l.iterator();
+            return l;
+        }
+
+        @Override
+        public Iterator<Cell> iterator() {
+            return asList().iterator();
         }
     }
 
