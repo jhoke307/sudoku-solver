@@ -45,7 +45,7 @@ class SudokuCell extends Canvas {
 		inputColor = new Color(null, 0, 0, 0);
 		pencilColor = new Color(null, 80, 80, 80);
 		hintColor = new Color(null, 0, 155, 157);
-		noteColor = new Color(null, 80, 90, 255);
+		noteColor = new Color(null, 128, 160, 255);
 		invalidColor = new Color(null, 255, 80, 80);
 
 		setBackground(backgroundColor);
