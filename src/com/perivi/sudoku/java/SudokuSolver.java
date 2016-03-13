@@ -18,6 +18,7 @@ public class SudokuSolver {
         strategies.add(new OnlySquareStrategy());
         strategies.add(new SubgroupExclusionStrategy());
         strategies.add(new NakedMultiplesStrategy());
+        strategies.add(new XWingStrategy());
         strategies.add(new BacktrackingStrategy());
     }
 

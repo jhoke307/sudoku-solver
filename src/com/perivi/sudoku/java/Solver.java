@@ -16,6 +16,7 @@ public class Solver {
         smartStrategies.add(new OnlySquareStrategy());
         smartStrategies.add(new SubgroupExclusionStrategy());
         smartStrategies.add(new NakedMultiplesStrategy());
+        smartStrategies.add(new XWingStrategy());
     }
     private final static List<Strategy> allStrategies = new ArrayList<>(smartStrategies);
     static {
