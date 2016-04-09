@@ -51,7 +51,7 @@ public class SudokuSolver {
             }
 
             for (final Strategy strategy : strategies) {
-                if (strategy.apply(currentGrid) == Boolean.TRUE) {
+                if (Boolean.TRUE.equals(strategy.apply(currentGrid))) {
                     strategyCounters.add(strategy);
                     System.out.println("after applying strategy " + strategy.getClass().getName() + ":");
                     System.out.print(currentGrid.toString() + "\n");

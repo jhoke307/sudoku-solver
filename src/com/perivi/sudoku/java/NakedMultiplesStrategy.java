@@ -2,10 +2,8 @@ package com.perivi.sudoku.java;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -39,7 +37,6 @@ public class NakedMultiplesStrategy implements Strategy {
             final List<Grid.Cell> cells = Lists.newArrayList(section);
             final List<Set<Integer>> possibilities = new ArrayList<>();
             final Multimap<Integer, Grid.Cell> possibilityToCellsMap = ArrayListMultimap.create();
-            final Map<Grid.Cell, Set<Integer>> cellMap = new HashMap<>();
             for (final Grid.Cell cell : cells) {
                 if (cell.getValue() != null) {
                     possibilities.add(Collections.<Integer> emptySet());
@@ -54,7 +51,6 @@ public class NakedMultiplesStrategy implements Strategy {
                     final Set<Integer> remainingPossibilities = new HashSet<>(Sets.difference(Grid.ALL_POSSIBILITIES,
                             Sets.union(rowValues, Sets.union(colValues, houseValues))));
                     possibilities.add(remainingPossibilities);
-                    cellMap.put(cell, remainingPossibilities);
 
                     for (final Integer p : remainingPossibilities) {
                         possibilityToCellsMap.put(p, cell);

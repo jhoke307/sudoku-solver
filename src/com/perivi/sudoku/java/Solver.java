@@ -41,7 +41,7 @@ public class Solver {
 
     public boolean solveStep(final Grid input) {
     	for (final Strategy strategy : strategies) {
-    		if (strategy.apply(input) == Boolean.TRUE) {
+    		if (Boolean.TRUE.equals(strategy.apply(input))) {
     			strategyCounters.add(strategy);
     			System.out.println(strategy.getClass().getSimpleName());
     			return true;
