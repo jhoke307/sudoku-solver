@@ -3,6 +3,8 @@ package com.perivi.sudoku.java;
 import java.util.Collection;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.perivi.sudoku.java.Grid.Cell;
@@ -19,7 +21,11 @@ import com.perivi.sudoku.java.Grid.CellState;
 public class OnlySquareStrategy implements Strategy {
 
     @Override
-    public Boolean apply(final Grid input) {
+    public Boolean apply(@Nullable final Grid input) {
+        if (input == null) {
+            return Boolean.FALSE;
+        }
+
         // For each row, column, house:
         for (final Iterable<Grid.Cell> section : input.sections()) {
             final Multimap<Integer, Grid.Cell> possibilityMap = HashMultimap.create();

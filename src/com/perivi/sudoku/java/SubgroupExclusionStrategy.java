@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.perivi.sudoku.java.Grid.Cell;
@@ -18,7 +20,11 @@ import com.perivi.sudoku.java.Grid.Cell;
 public class SubgroupExclusionStrategy implements Strategy {
 
 	@Override
-	public Boolean apply(final Grid input) {
+	public Boolean apply(@Nullable final Grid input) {
+	    if (input == null) {
+	        return Boolean.FALSE;
+	    }
+
 		for (final Grid.House house : input.houses()) {
 			final Multimap<Integer, Integer> pToRowMap = HashMultimap.create();
 

@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -15,7 +18,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onParam=@__(@Nullable))
 public class Grid {
 	public enum CellState {
 		INPUT,
@@ -83,7 +86,7 @@ public class Grid {
         }
     }
 
-    public Grid(final Grid source) {
+    public Grid(@Nonnull final Grid source) {
         this();
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
@@ -94,28 +97,41 @@ public class Grid {
         }
     }
 
+    @Nonnull
+    public Grid newInstance() {
+        return new Grid(this);
+    }
+
+    @SuppressWarnings("null")
+    @Nonnull
     public Cell cellAt(final int row, final int col) {
+        Objects.requireNonNull(gridData[row][col]);
         return gridData[row][col];
     }
 
+    @Nonnull
     public Column column(final int col) {
         return new Column(col);
     }
 
+    @Nonnull
     public Row row(final int row) {
         return new Row(row);
     }
 
+    @Nonnull
     public House house(final int row, final int col) {
         return new House(row, col);
     }
 
+    @Nonnull
     public House houseContaining(final int row, final int col) {
         final int houseRow = row / getHouseHeight();
         final int houseCol = col / getHouseWidth();
         return house(houseRow, houseCol);
     }
 
+    @Nonnull
     public Iterable<Cell> cells() {
     	final List<Cell> l = new ArrayList<>(width * height);
     	for (int i = 0; i < height; ++i) {
@@ -126,6 +142,7 @@ public class Grid {
     	return l;
     }
 
+    @Nonnull
     public Iterable<Column> columns() {
         final List<Column> l = new ArrayList<>(getWidth());
         for (int i = 0; i < getWidth(); ++i) {
@@ -134,6 +151,7 @@ public class Grid {
         return l;
     }
 
+    @Nonnull
     public Iterable<Row> rows() {
         final List<Row> l = new ArrayList<>(getHeight());
         for (int i = 0; i < getHeight(); ++i) {
@@ -142,6 +160,7 @@ public class Grid {
         return l;
     }
 
+    @Nonnull
     public Iterable<House> houses() {
         final int houseRows = height / houseHeight;
         final int houseCols = width / houseWidth;
@@ -155,11 +174,14 @@ public class Grid {
         return l;
     }
 
+    @SuppressWarnings("null")
+    @Nonnull
     public Iterable<Iterable<Cell>> sections() {
         return Iterables.concat(rows(), columns(), houses());
     }
 
-    public static List<Integer> values(final Iterable<Grid.Cell> section) {
+    @Nonnull
+    public static List<Integer> values(@Nonnull final Iterable<Grid.Cell> section) {
         final List<Integer> l = new ArrayList<>();
 
         for (final Grid.Cell c : section) {
@@ -189,9 +211,8 @@ public class Grid {
      * @throws IllegalArgumentException
      *             if input is not in expected format
      */
-    public static Grid fromString(final String input) {
-        Objects.requireNonNull(input, "input cannot be null");
-
+    @Nonnull
+    public static Grid fromString(@Nonnull final String input) {
         final String lines[] = input.split("\\r?\\n");
         if (lines.length != DEFAULT_HEIGHT) {
             throw new IllegalArgumentException("Input has " + lines.length + " lines, expected " + DEFAULT_HEIGHT);
@@ -222,7 +243,7 @@ public class Grid {
         return instance;
     }
 
-    @Data
+    @Data @EqualsAndHashCode(onParam=@__(@Nullable))
     public class Cell {
         private final int row;
         private final int col;
@@ -231,15 +252,17 @@ public class Grid {
         private Set<Integer> notes = new HashSet<>(Grid.ALL_POSSIBILITIES);
         private List<CellListener> listeners = new ArrayList<>();
 
+        @Nonnull
         public Row getRowObject() {
         	return new Row(row);
         }
 
+        @Nonnull
         public Column getColumnObject() {
         	return new Column(col);
         }
 
-        public void setValue(Integer value) {
+        public void setValue(@Nullable Integer value) {
             if (!Objects.equals(value, this.value)) {
                 this.value = value;
                 this.notes.clear();
@@ -247,32 +270,32 @@ public class Grid {
             }
         }
 
-        public void setState(CellState state) {
+        public void setState(@Nullable CellState state) {
             if (!Objects.equals(state, this.state)) {
                 this.state = state;
                 notifyListeners();
             }
         }
 
-        public void addNote(Integer n) {
+        public void addNote(@Nonnull Integer n) {
             if (!containsNote(n)) {
                 notes.add(n);
                 notifyListeners();
             }
         }
 
-        public void removeNote(Integer n) {
+        public void removeNote(@Nullable Integer n) {
             if (containsNote(n)) {
                 notes.remove(n);
                 notifyListeners();
             }
         }
 
-        public boolean containsNote(Integer n) {
+        public boolean containsNote(@Nullable Integer n) {
             return notes.contains(n);
         }
 
-        public void addListener(CellListener l) {
+        public void addListener(@Nonnull CellListener l) {
         	listeners.add(l);
         	l.cellUpdated(this);
         }
@@ -288,28 +311,34 @@ public class Grid {
     	void cellUpdated(Cell c);
     }
 
-    @Data
+    @Data @EqualsAndHashCode(onParam=@__(@Nullable))
     public class Row implements Iterable<Cell> {
         private final int row;
 
+        @SuppressWarnings("null")
+        @Nonnull
         public Cell cell(final int idx) {
             return gridData[row][idx];
         }
 
         @Override
+        @Nonnull
         public Iterator<Cell> iterator() {
             return Arrays.asList(gridData[row]).iterator();
         }
     }
 
-    @Data
+    @Data @EqualsAndHashCode(onParam=@__(@Nullable))
     public class Column implements Iterable<Cell> {
         private final int column;
 
+        @SuppressWarnings("null")
+        @Nonnull
         public Cell cell(final int idx) {
             return gridData[idx][column];
         }
 
+        @Nonnull
         public List<Cell> asList() {
             final List<Cell> l = new ArrayList<>(height);
             for (int i = 0; i < height; ++i) {
@@ -318,22 +347,29 @@ public class Grid {
             return l;
         }
 
+        @Nonnull
         @Override
         public Iterator<Cell> iterator() {
             return asList().iterator();
         }
     }
 
-    @Data
+    @Data @EqualsAndHashCode(onParam=@__(@Nullable))
     public class House implements Iterable<Cell> {
         private final int row;
         private final int column;
 
+        @SuppressWarnings("null")
+        @Nonnull
         public Cell cell(final int r, final int c) {
             return gridData[row * houseHeight + r][column * houseWidth + c];
         }
 
-        public boolean contains(Cell c) {
+        public boolean contains(@Nullable Cell c) {
+            if (c == null) {
+                return false;
+            }
+
         	final int upper = row * houseHeight;
         	final int lower = upper + houseHeight;
         	final int left = column * houseWidth;
@@ -342,6 +378,7 @@ public class Grid {
         			c.getCol() >= left && c.getCol() < right;
         }
 
+        @Nonnull
         public Iterable<Cell> subRow(final int row) {
         	final List<Cell> l = new ArrayList<>();
         	for (int i = 0; i < houseWidth; ++i) {
@@ -350,6 +387,7 @@ public class Grid {
         	return l;
         }
 
+        @Nonnull
         public Iterable<Cell> subColumn(final int col) {
         	final List<Cell> l = new ArrayList<>();
         	for (int i = 0; i < houseHeight; ++i) {
@@ -358,6 +396,7 @@ public class Grid {
         	return l;
         }
 
+        @Nonnull
         @Override
         public Iterator<Cell> iterator() {
             final List<Cell> l = new ArrayList<>(houseHeight * houseWidth);

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -26,7 +28,11 @@ import com.perivi.sudoku.java.Grid.House;
 public class NakedMultiplesStrategy implements Strategy {
 
     @Override
-    public Boolean apply(final Grid input) {
+    public Boolean apply(@Nullable final Grid input) {
+        if (input == null) {
+            return Boolean.FALSE;
+        }
+
         // For each row, column, house:
         for (final Iterable<Grid.Cell> section : input.sections()) {
             // Build the list of possibilities.
@@ -209,5 +215,4 @@ public class NakedMultiplesStrategy implements Strategy {
 
         return Boolean.FALSE;
     }
-
 }

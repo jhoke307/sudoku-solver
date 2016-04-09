@@ -1,5 +1,7 @@
 package com.perivi.sudoku.java;
 
+import javax.annotation.Nullable;
+
 import com.perivi.sudoku.java.Grid.CellState;
 
 /**
@@ -12,7 +14,11 @@ import com.perivi.sudoku.java.Grid.CellState;
 public class SinglePossibilityStrategy implements Strategy {
 
     @Override
-    public Boolean apply(final Grid grid) {
+    public Boolean apply(@Nullable final Grid grid) {
+        if (grid == null) {
+            return Boolean.FALSE;
+        }
+
     	for (final Grid.Cell cell : grid.cells()) {
     	    // This is a harder strategy since it requires keeping notes -- vs
     	    // OnlyChoice -- but also much easier to implement since we do keep

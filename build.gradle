@@ -30,6 +30,7 @@ dependencies {
     compile "org.eclipse.swt:${swtArtifactName}:${swtVersion}"
     provided "org.projectlombok:lombok:1.16.8"
     compile 'com.google.guava:guava:19.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.0'
 }
 
 run {

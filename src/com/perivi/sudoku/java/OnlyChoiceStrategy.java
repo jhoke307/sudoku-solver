@@ -3,6 +3,8 @@ package com.perivi.sudoku.java;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import com.perivi.sudoku.java.Grid.CellState;
 
 /**
@@ -14,7 +16,11 @@ import com.perivi.sudoku.java.Grid.CellState;
  */
 public class OnlyChoiceStrategy implements Strategy {
 	@Override
-	public Boolean apply(final Grid grid) {
+	public Boolean apply(@Nullable final Grid grid) {
+	    if (grid == null) {
+	        return Boolean.FALSE;
+	    }
+
 	    for (final Iterable<Grid.Cell> section : grid.sections()) {
 	        final List<Grid.Cell> emptyCells = new ArrayList<>();
 	        for (final Grid.Cell cell : section) {

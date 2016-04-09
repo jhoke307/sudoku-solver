@@ -1,5 +1,7 @@
 package com.perivi.sudoku.java;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Predicate;
 
 public class PossibleCellPredicate implements Predicate<Grid.Cell> {
@@ -10,7 +12,11 @@ public class PossibleCellPredicate implements Predicate<Grid.Cell> {
     }
 
     @Override
-    public boolean apply(final Grid.Cell input) {
+    public boolean apply(@Nullable final Grid.Cell input) {
+        if (input == null) {
+            return false;
+        }
+
         return input.containsNote(possibility);
     }
 }

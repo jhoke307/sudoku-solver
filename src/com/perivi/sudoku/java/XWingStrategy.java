@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -19,7 +21,11 @@ import com.google.common.collect.Sets;
  */
 public class XWingStrategy implements Strategy {
 	@Override
-	public Boolean apply(final Grid input) {
+	public Boolean apply(@Nullable final Grid input) {
+	    if (input == null) {
+	        return Boolean.FALSE;
+	    }
+
 	    for (final Integer possibility : Grid.ALL_POSSIBILITIES) {
 //	        System.out.println("Considering " + possibility);
 

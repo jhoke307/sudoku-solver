@@ -44,7 +44,7 @@ public class SudokuSolver {
         currentGrid = originalGrid;
         do {
             lastGrid = currentGrid;
-            currentGrid = new Grid(lastGrid);
+            currentGrid = lastGrid.newInstance();
 
             if (solutionGrid != null) {
                 checkAgainstSolution(currentGrid, solutionGrid);

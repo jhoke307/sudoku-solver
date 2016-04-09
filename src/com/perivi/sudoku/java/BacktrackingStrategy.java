@@ -3,6 +3,8 @@ package com.perivi.sudoku.java;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
@@ -18,7 +20,11 @@ import com.perivi.sudoku.java.Grid.House;
 public class BacktrackingStrategy implements Strategy {
 
     @Override
-    public Boolean apply(final Grid input) {
+    public Boolean apply(@Nullable final Grid input) {
+        if (input == null) {
+            return false;
+        }
+
         // This is rather slow. We should be able to do it for all cells.
         for (int i = 0; i < input.getHeight(); ++i) {
             for (int j = 0; j < input.getWidth(); ++j) {
@@ -66,5 +72,4 @@ public class BacktrackingStrategy implements Strategy {
 
         return Boolean.FALSE;
     }
-
 }
