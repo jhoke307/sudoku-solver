@@ -58,11 +58,13 @@ class SudokuCell extends Canvas {
 
 		setBackground(backgroundColor);
 
+		final int BASE_HEIGHT = 30;
+		final int HINT_HEIGHT = BASE_HEIGHT / 3;
 		final Font systemFont = getDisplay().getSystemFont();
 		final FontData[] fd = systemFont.getFontData();
-		fd[0].setHeight(36);
+		fd[0].setHeight(BASE_HEIGHT);
 		mainFont = new Font(getDisplay(), fd);
-		fd[0].setHeight(12);
+		fd[0].setHeight(HINT_HEIGHT);
 		noteFont = new Font(getDisplay(), fd);
 
 		final GC gc = new GC(this);
